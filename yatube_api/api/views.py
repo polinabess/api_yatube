@@ -42,14 +42,11 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (AuthorOrReadOnly, permissions.IsAuthenticated)
+    permission_classes = [AuthorOrReadOnly, permissions.IsAuthenticated]
 
     def get_post_id(self):
-        return get_object_or_404(Post, self.kwargs.get("post_id"))
-
-    def get_queryset(self):
-        post = self.get_post_id()
-        return Post.objects.filter(post=post)
+        post_id = self.kwargs.get('post_id')
+        return get_object_or_404(Post, pk=post_id)
 
     def get_queryset(self):
         post = self.get_post_id()
@@ -58,9 +55,3 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         post = self.get_post_id()
         serializer.save(author=self.request.user, post=post)
-
-    def deperform_destroy(self, serializer):
-        post = self.get_post_id()
-        if post.author != self.request.user:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        super(CommentViewSet, self).deperform_destroy(serializer)
