@@ -10,7 +10,7 @@ router = DefaultRouter()
 router.register('posts', PostViewSet)
 router.register('groups', GroupViewSet)
 router.register(
-    'posts/(?P<post_id>\d+)/comments',
+    r'posts/(?P<post_id>\d+)/comments',
     CommentViewSet,
     basename='comments'
 )
